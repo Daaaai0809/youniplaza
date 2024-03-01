@@ -1,6 +1,7 @@
 ---
 title: unimeshi ER図 (最終更新2024/03/01)
 ---
+```mermaid
 erDiagram
 users {
     text id PK "ユーザーID"
@@ -63,10 +64,11 @@ tag_to_restaurants {
     text deleted_at "削除日時"
 }
 
-users }o--|| schools 
-users ||--o{ restaurants
-users ||--o{ comments
-schools }o--|| restaurants
-restaurants ||--o{ comments
-restaurants ||--o{ tag_to_restaurants
-tags ||--o{ tag_to_restaurants
+users }o--|| schools : "1"
+users ||--o{ restaurants : "1"
+users ||--o{ comments : "1"
+schools }o--|| restaurants : "1"
+restaurants ||--o{ comments : "1"
+restaurants ||--o{ tag_to_restaurants : "1"
+tags ||--o{ tag_to_restaurants : "1"
+```
