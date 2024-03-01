@@ -12,7 +12,7 @@ compatibility_date = "2023-12-01"
 # binding = "MY_BUCKET"
 # bucket_name = "my-bucket"
 
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "my-database"
-# database_id = ""
+[[d1_databases]]
+binding = "DB"
+database_name = "unimeshi-db"
+database_id = "dbdfc7e0-8164-4270-8503-b71b65fa3107"
