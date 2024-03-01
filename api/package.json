@@ -1,7 +1,10 @@
 {
   "scripts": {
     "dev": "wrangler dev src/index.ts",
-    "deploy": "wrangler deploy --minify src/index.ts"
+    "deploy": "wrangler deploy --minify src/index.ts",
+    "generate": "drizzle-kit generate:sqlite --out migrations --schema ./src/schema.ts",
+    "migrate:local": "wrangler d1 migrations apply unimeshi-db --local",
+    "migrate:dev": "wrangler d1 migrations apply unimeshi-db"
   },
   "dependencies": {
     "drizzle-orm": "^0.29.4",
