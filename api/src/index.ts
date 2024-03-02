@@ -1,9 +1,16 @@
-import { Hono } from 'hono'
+import { Hono } from 'hono';
+import * as schema from '@/schema';
 
-const app = new Hono()
+type Bindings = {
+  DB: D1Database,
+};
 
-app.get('/', (c) => {
-  return c.text('Hello, World!')
-})
+const app = new Hono<{ Bindings: Bindings }>()
+
+const usersGroup = new Hono<{ Bindings: Bindings }>()
+
+usersGroup.get('/', async (c) => {
+  return c.text('Hello, world!');
+});
 
 export default app
