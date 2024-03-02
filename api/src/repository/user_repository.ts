@@ -24,7 +24,7 @@ export const getUserById = async ({ db, req }: IUserOperationParams<{ id: string
     }
 
     const result = await db.query.users.findFirst({
-        where: ((users, { eq }) => eq(users.id, req.id)),
+        where: ((users, { and, eq, isNull }) => and(eq(users.id, req.id), isNull(users.deleted_at))),
     });
 
     return result;
@@ -36,7 +36,7 @@ export const getUserByKeyword = async ({ db, req }: IUserOperationParams<{ keywo
     }
 
     const result = await db.query.users.findMany({
-        where: ((users, { like, or }) => or(like(users.username, req.keyword), like(users.name, req.keyword))),
+        where: ((users, { like, or }) => or(like(users.username, `%${req.keyword}%`), like(users.name, `%${req.keyword}%`))),
     });
 
     return result;
@@ -83,7 +83,7 @@ export const updateUser = async ({ db, req }: IUserOperationParams<UpdateUserReq
     const result = await db.update(schema.users).set({
         username: req.username,
         name: req.name,
-        password: req.password,
+        password: req.password ? await hashPassword(req.password) : undefined,
         email: req.email,
         // school_id: req.school_id,
     }).where(eq(schema.users.id, req.id)).execute().catch((err) => {

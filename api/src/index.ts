@@ -102,19 +102,19 @@ usersGroup.get('/', async (c) => {
 
   return c.json(res, 200);
 });
+usersGroup.get('/search', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const keyword = await c.req.query('keyword') || '';
+  
+  const res = await userService.getUserByKeyword({ db: db, keyword: keyword });
+
+  return c.json(res, 200);
+});
 usersGroup.get('/:id', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const id = await c.req.param('id');
 
   const res = await userService.getUserByID({ db: db, id: id});
-
-  return c.json(res, 200);
-});
-usersGroup.get('/search/:keyword', async (c) => {
-  const db = drizzle(c.env.DB, { schema: schema });
-  const keyword = await c.req.param('keyword');
-
-  const res = await userService.getUserByKeyword({ db: db, keyword: keyword });
 
   return c.json(res, 200);
 });
@@ -136,6 +136,10 @@ usersGroup.delete('/:id', async (c) => {
   return c.json(res, 200);
 });
 
-app.route('/users', usersGroup);
+const api = new Hono<{ Bindings: Bindings }>();
 
-export default app
+app.route('/users', usersGroup);
+api.route('/auth', authGroup);
+api.route('/app', app);
+
+export default api;
