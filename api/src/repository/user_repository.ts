@@ -36,7 +36,7 @@ export const getUserByKeyword = async ({ db, req }: IUserOperationParams<{ keywo
     }
 
     const result = await db.query.users.findMany({
-        where: ((users, { like, or }) => or(like(users.username, `%${req.keyword}%`), like(users.name, `%${req.keyword}%`))),
+        where: ((users, { and, like, or, isNull }) => and(or(like(users.username, `%${req.keyword}%`), like(users.name, `%${req.keyword}%`)), isNull(users.deleted_at))),
     });
 
     return result;
@@ -48,7 +48,7 @@ export const getUserByUsername = async ({ db, req }: IUserOperationParams<{ user
     }
 
     const result = await db.query.users.findFirst({
-        where: ((users, { eq }) => eq(users.username, req.username)),
+        where: ((users, { and, eq, isNull }) => and(eq(users.username, req.username), isNull(users.deleted_at))),
     });
 
     return result;

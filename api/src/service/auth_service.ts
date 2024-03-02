@@ -128,7 +128,7 @@ const valifyPassword = async ({ password, hashedPassword }: { password: string, 
 const generateToken = async ({ id, mode, secret }: { id: string, mode: 'access' | 'refresh', secret: string }) => {
     const now = Date.now();
 
-    const exp = mode === 'access' ? now + DAY : now + DAY * 3;
+    const exp = mode === 'access' ? now + DAY : now + DAY * 30;
 
     const payload = {
         iss: 'unimeshi',
