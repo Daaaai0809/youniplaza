@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as schema from '@/schema';
 import { hashPassword } from '@/utils/hash_password';
 import { eq } from 'drizzle-orm';
+import { CreateUserRequest, UpdateUserRequest } from '@/request/user_request';
 
 interface IUserOperationParams<T = any> {
     db: DrizzleD1Database<typeof schema>;
@@ -29,7 +30,7 @@ export const getUserById = async ({ db, req }: IUserOperationParams<{ id: string
     return result;
 }
 
-export const getUserByUsername = async ({ db, req }: IUserOperationParams<{ keyword: string }>) => {
+export const getUserByKeyword = async ({ db, req }: IUserOperationParams<{ keyword: string }>) => {
     if (!req) {
         throw new Error('Invalid request');
     }
@@ -39,14 +40,6 @@ export const getUserByUsername = async ({ db, req }: IUserOperationParams<{ keyw
     });
 
     return result;
-}
-
-type CreateUserRequest = {
-    username: string;
-    name: string;
-    password: string;
-    email: string;
-    // school_id: number;
 }
 
 export const createUser = async ({ db, req }: IUserOperationParams<CreateUserRequest>) => {
@@ -68,15 +61,6 @@ export const createUser = async ({ db, req }: IUserOperationParams<CreateUserReq
     });
 
     return result;
-}
-
-type UpdateUserRequest = {
-    id: string;
-    username?: string;
-    name?: string;
-    password?: string;
-    email?: string;
-    // school_id: number;
 }
 
 export const updateUser = async ({ db, req }: IUserOperationParams<UpdateUserRequest>) => {
