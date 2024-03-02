@@ -81,6 +81,8 @@ authGroup.post('/login', async (c) => {
 authGroup.get('/logout', async (c) => {
   const token = getCookie(c, 'access_token');
   if (!token) {
+    deleteCookie(c, 'access_token');
+    deleteCookie(c, 'refresh_token');
     return c.json({ message: errorMessages.auth.unauthorized }, 401);
   }
   await authService.logout({ token: token, blackList: c.env.TOKEN_BLACK_LIST });
@@ -93,12 +95,16 @@ authGroup.get('/logout', async (c) => {
 authGroup.get('/refresh', async (c) => {
   const token = getCookie(c, 'refresh_token');
   if (!token) {
+    deleteCookie(c, 'access_token');
+    deleteCookie(c, 'refresh_token');
     return c.json({ message: errorMessages.auth.unauthorized }, 401);
   }
 
   const db = drizzle(c.env.DB, { schema: schema });
 
   const res = await authService.refresh({ token: token, db: db, blackList: c.env.TOKEN_BLACK_LIST, secret: c.env.JWT_SECRET }).catch((err) => {
+    deleteCookie(c, 'access_token');
+    deleteCookie(c, 'refresh_token');
     return c.json({ message: err.message }, 401);
   }) as LoginResponse;
 
@@ -149,6 +155,9 @@ usersGroup.delete('/:id', async (c) => {
   const id = await c.req.param('id');
 
   const res = await userService.deleteUser({ db: db, id: id });
+
+  deleteCookie(c, 'access_token');
+  deleteCookie(c, 'refresh_token');
 
   return c.json(res, 200);
 });
