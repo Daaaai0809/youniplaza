@@ -7,9 +7,11 @@
     "migrate:dev": "wrangler d1 migrations apply unimeshi-db"
   },
   "dependencies": {
+    "@types/uuid": "^9.0.8",
     "drizzle-orm": "^0.29.4",
     "hono": "^4.0.8",
-    "sqlite": "^5.1.1"
+    "sqlite": "^5.1.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240208.0",
