@@ -42,6 +42,18 @@ export const getUserByKeyword = async ({ db, req }: IUserOperationParams<{ keywo
     return result;
 }
 
+export const getUserByUsername = async ({ db, req }: IUserOperationParams<{ username: string }>) => {
+    if (!req) {
+        throw new Error('Invalid request');
+    }
+
+    const result = await db.query.users.findFirst({
+        where: ((users, { eq }) => eq(users.username, req.username)),
+    });
+
+    return result;
+}
+
 export const createUser = async ({ db, req }: IUserOperationParams<CreateUserRequest>) => {
     if (!req) {
         throw new Error('Invalid request');
