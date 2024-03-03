@@ -64,10 +64,10 @@ tag_to_restaurants {
     text deleted_at "削除日時"
 }
 
-users }o--|| schools : "所属大学"
 users ||--o{ restaurants : "飲食店の投稿"
 users ||--o{ comments : "ユーザーが投稿したコメント"
 schools ||--o{ restaurants : "学校周辺の飲食店"
+schools ||--o{ users : "所属大学"
 restaurants ||--o{ comments : "飲食店に対するコメント"
 restaurants ||--o{ tag_to_restaurants : "m2m"
 tags ||--o{ tag_to_restaurants : "m2m"
