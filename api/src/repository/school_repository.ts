@@ -1,6 +1,5 @@
 import { DrizzleD1Database } from 'drizzle-orm/d1';
 import * as schema from '@/schema';
-import { CreateSchoolRequest, UpdateSchoolRequest } from '@/request/school_request';
 import { eq, inArray } from 'drizzle-orm';
 
 interface ISchoolOperationParams<T = any> {
@@ -52,7 +51,13 @@ export const getSchoolsByPrefecture = async ({ db, req }: ISchoolOperationParams
     return result;
 }
 
-export const createSchool = async ({ db, req }: ISchoolOperationParams<CreateSchoolRequest>) => {
+type CreateSchoolParams = {
+    name: string;
+    prefecture_id: number;
+    address: string;
+};
+
+export const createSchool = async ({ db, req }: ISchoolOperationParams<CreateSchoolParams>) => {
     if (!req) {
         throw new Error('Invalid request');
     }
@@ -66,8 +71,15 @@ export const createSchool = async ({ db, req }: ISchoolOperationParams<CreateSch
     return result;
 };
 
-export const updateSchool = async ({ db, req }: ISchoolOperationParams<UpdateSchoolRequest & { id: number }>) => {
-    if (!req) {
+type UpdateSchoolParams = {
+    id: number;
+    name?: string;
+    prefecture_id?: number;
+    address?: string;
+};
+
+export const updateSchool = async ({ db, req }: ISchoolOperationParams<UpdateSchoolParams>) => {
+    if (!req || !req.id) {
         throw new Error('Invalid request');
     }
 
