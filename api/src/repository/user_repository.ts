@@ -12,6 +12,9 @@ interface IUserOperationParams<T = any> {
 export const getAllUsers = async ({ db }: IUserOperationParams) => {
     const result = await db.query.users.findMany({
         where: ((users, { isNull }) => isNull(users.deleted_at)),
+        with: {
+            schools: true,
+        }
     });
 
     return result;
@@ -24,6 +27,9 @@ export const getUserById = async ({ db, req }: IUserOperationParams<{ id: string
 
     const result = await db.query.users.findFirst({
         where: ((users, { and, eq, isNull }) => and(eq(users.id, req.id), isNull(users.deleted_at))),
+        with: {
+            schools: true,
+        }
     });
 
     return result;
@@ -36,6 +42,9 @@ export const getUserByKeyword = async ({ db, req }: IUserOperationParams<{ keywo
 
     const result = await db.query.users.findMany({
         where: ((users, { and, like, or, isNull }) => and(or(like(users.username, `%${req.keyword}%`), like(users.name, `%${req.keyword}%`)), isNull(users.deleted_at))),
+        with: {
+            schools: true,
+        }
     });
 
     return result;
@@ -48,6 +57,9 @@ export const getUserByUsername = async ({ db, req }: IUserOperationParams<{ user
 
     const result = await db.query.users.findFirst({
         where: ((users, { and, eq, isNull }) => and(eq(users.username, req.username), isNull(users.deleted_at))),
+        with: {
+            schools: true,
+        }
     });
 
     return result;

@@ -1,7 +1,6 @@
 import * as repository from '@/repository/user_repository';
 import { DrizzleD1Database } from 'drizzle-orm/d1';
 import * as schema from '@/schema';
-import { UpdateUserRequest } from '@/request/user_request';
 import { newGetUserByIDResponse, newGetUserByKeywordResponse, newGetUsersResponse } from '@/response/user_response';
 
 export const getUsers = async ({ db }: { db: DrizzleD1Database<typeof schema>}) => {
@@ -32,7 +31,16 @@ export const getUserByKeyword = async ({ db, keyword }: { db: DrizzleD1Database<
     return newGetUserByKeywordResponse(result);
 }
 
-export const updateUser = async ({ db, req }: { db: DrizzleD1Database<typeof schema>, req: UpdateUserRequest & { id: string } }) => {
+type UpdateUserParams = {
+    id: string;
+    username?: string;
+    name?: string;
+    email?: string;
+    password?: string;
+    school_id?: number;
+};
+
+export const updateUser = async ({ db, req }: { db: DrizzleD1Database<typeof schema>, req: UpdateUserParams}) => {
   const result = await repository.updateUser({ db, req }).catch((err) => {
     throw new Error(err);
   });

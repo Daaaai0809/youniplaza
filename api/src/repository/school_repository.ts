@@ -15,7 +15,7 @@ export const getAllSchools = async ({ db }: ISchoolOperationParams) => {
     return result;
 };
 
-export const getSchoolsById = async ({ db, req }: ISchoolOperationParams<{ id: number }>) => {
+export const getSchoolById = async ({ db, req }: ISchoolOperationParams<{ id: number }>) => {
     if (!req) {
         throw new Error('Invalid request');
     }
