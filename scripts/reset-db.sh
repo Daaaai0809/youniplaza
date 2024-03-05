@@ -17,6 +17,8 @@ for table in "${TABLE_NAMES[@]}"; do
   wrangler d1 execute unimeshi-db --local --command "DROP TABLE ${table};"
 done
 
+rm -R migrations
+
 # Create the database
 if [ ! -d "./migrations/*" ]; then
   pnpm run generate

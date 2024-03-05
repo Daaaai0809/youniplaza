@@ -10,6 +10,18 @@ CREATE TABLE `comments` (
 	FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
+CREATE TABLE `photos` (
+	`id` integer PRIMARY KEY NOT NULL,
+	`comment_id` integer,
+	`restaurant_id` integer,
+	`url` text NOT NULL,
+	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`updated_at` text,
+	`deleted_at` text,
+	FOREIGN KEY (`comment_id`) REFERENCES `comments`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
 CREATE TABLE `restaurants` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
@@ -65,6 +77,15 @@ CREATE TABLE `users` (
 	`updated_at` text,
 	`deleted_at` text,
 	FOREIGN KEY (`school_id`) REFERENCES `schools`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `users_to_restaurants` (
+	`user_id` text,
+	`restaurant_id` integer,
+	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	PRIMARY KEY(`restaurant_id`, `user_id`),
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `restaurants_name_unique` ON `restaurants` (`name`);--> statement-breakpoint
