@@ -12,6 +12,9 @@ interface IUserOperationParams<T = any> {
 export const getAllUsers = async ({ db }: IUserOperationParams) => {
     const result = await db.query.users.findMany({
         where: ((users, { isNull }) => isNull(users.deleted_at)),
+        with: {
+            school: true,
+        }
     });
 
     return result;

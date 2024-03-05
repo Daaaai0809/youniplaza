@@ -3,7 +3,12 @@ interface IUser {
     username: string;
     name: string;
     email: string;
-    // school_id: number;
+    school: {
+        id: number;
+        name: string;
+        prefecture_id: number;
+        address: string;
+    } | null;
 }
 
 export type User = {
@@ -11,7 +16,12 @@ export type User = {
     username: string;
     name: string;
     email: string;
-    // school_id: number;
+    school: {
+        id: number;
+        name: string;
+        prefecture_id: number;
+        address: string;
+    } | null;
 }
 
 export type GetAllUserResponse = {
@@ -28,18 +38,40 @@ export type GetUserByKeywordResponse = {
 
 export const newGetUsersResponse = (users: IUser[]): GetAllUserResponse => {
     return {
-        users
+        users: users.map((user) => {
+            return {
+                id: user.id,
+                username: user.username,
+                name: user.name,
+                email: user.email,
+                school: user.school
+            }
+        }),
     }
 }
 
 export const newGetUserByIDResponse = (user: IUser): GetUserByIDResponse => {
     return {
-        user
+        user: {
+            id: user.id,
+            username: user.username,
+            name: user.name,
+            email: user.email,
+            school: user.school
+        },
     }
 }
 
 export const newGetUserByKeywordResponse = (users: IUser[]): GetUserByKeywordResponse => {
     return {
-        users
+        users: users.map((user) => {
+            return {
+                id: user.id,
+                username: user.username,
+                name: user.name,
+                email: user.email,
+                school: user.school
+            }
+        }),
     }
 }
