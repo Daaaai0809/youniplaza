@@ -1,5 +1,5 @@
 import * as schema from '@/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { DrizzleD1Database } from 'drizzle-orm/d1';
 
 interface IRestaurantOperationParams<T = any> {
@@ -91,14 +91,24 @@ export const updateRestaurant = async ({ db, req }: IRestaurantOperationParams<U
     return result;
 };
 
-export const deleteRestaurant = async ({ db, req }: IRestaurantOperationParams<{ id: number }>) => {
+export const deleteRestaurant = async ({ db, req }: IRestaurantOperationParams<{ id: number, author_id: string }>) => {
     if (!req) {
         throw new Error('Invalid request');
     }
 
     const result = await db.update(schema.restaurants).set({
         deleted_at: new Date().toISOString(),
-    }).where(eq(schema.restaurants.id, req.id)).execute();
+    }).where(and(eq(schema.restaurants.id, req.id), eq(schema.restaurants.author_id, req.author_id))).execute();
+
+    return result;
+}
+
+export const strictDeleteRestaurant = async ({ db, req }: IRestaurantOperationParams<{ id: number }>) => {
+    if (!req) {
+        throw new Error('Invalid request');
+    }
+
+    const result = await db.delete(schema.restaurants).where(eq(schema.restaurants.id, req.id)).execute();
 
     return result;
 }

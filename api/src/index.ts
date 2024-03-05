@@ -3,6 +3,7 @@ import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import * as authService from '@/service/auth_service';
 import * as userService from '@/service/user_service';
 import * as schoolService from '@/service/school_service';
+import * as restaurantService from '@/service/restaurant_service';
 import * as schema from '@/schema';
 import { drizzle } from 'drizzle-orm/d1';
 import { UpdateUserRequest } from './request/user_request';
@@ -11,6 +12,7 @@ import { LoginResponse } from './response/auth_response';
 import { LoginRequest, SignUpRequest } from './request/auth_request';
 import { DAY } from './const/time';
 import { CreateSchoolRequest, UpdateSchoolRequest } from './request/school_request';
+import { CreateRestaurantRequest, UpdateRestaurantRequest } from './request/restaurant_request';
 
 type Bindings = {
   DB: D1Database,
@@ -231,6 +233,55 @@ schoolsGroup.delete('/:id', async (c) => {
 });
 
 const restaurantsGroup = new Hono<{ Bindings: Bindings, Variables: Variables }>();
+
+restaurantsGroup.get('/', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+
+  const res = await restaurantService.getAllRestaurants({ db: db });
+
+  return c.json(res, 200);
+});
+restaurantsGroup.get('/search', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const keyword = await c.req.query('keyword') || '';
+
+  const res = await restaurantService.getRestaurantsByKeyword({ db: db, keyword: keyword });
+
+  return c.json(res, 200);
+});
+restaurantsGroup.get('/:id', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+
+  const res = await restaurantService.getRestaurantById({ db: db, id: id });
+
+  return c.json(res, 200);
+});
+restaurantsGroup.post('/', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const req = await c.req.json<CreateRestaurantRequest>();
+
+  const res = await restaurantService.createRestaurant({ db: db, req: { ...req, author_id: c.get('user_id') } });
+
+  return c.json(res, 201);
+});
+restaurantsGroup.put('/:id', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+  const req = await c.req.json<UpdateRestaurantRequest>();
+
+  const res = await restaurantService.updateRestaurant({ db: db, req: { ...req, id } });
+
+  return c.json(res, 200);
+});
+restaurantsGroup.delete('/:id', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+
+  const res = await restaurantService.deleteRestaurant({ db: db, id: id, author_id: c.get('user_id') });
+
+  return c.json(res, 200);
+});
 
 const api = new Hono<{ Bindings: Bindings }>();
 

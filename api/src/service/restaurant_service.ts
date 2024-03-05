@@ -1,4 +1,5 @@
 import * as repository from '@/repository/restaurant_repository';
+import { newGetAllRestaurantsResponse, newGetRestaurantByIDResponse, newGetRestaurantsByKeywordResponse } from '@/response/restaurant_response';
 import * as schema from '@/schema';
 import { DrizzleD1Database } from 'drizzle-orm/d1';
 
@@ -12,7 +13,7 @@ export const getAllRestaurants = async ({ db }: IRestaurantOperationParams) => {
         throw new Error(err);
     });
 
-    return result;
+    return newGetAllRestaurantsResponse(result);
 };
 
 export const getRestaurantById = async ({ db, id }: { db: DrizzleD1Database<typeof schema>, id: number }) => {
@@ -24,7 +25,7 @@ export const getRestaurantById = async ({ db, id }: { db: DrizzleD1Database<type
         throw new Error('Restaurant not found');
     }
 
-    return result;
+    return newGetRestaurantByIDResponse(result);
 };
 
 export const getRestaurantsByKeyword = async ({ db, keyword }: { db: DrizzleD1Database<typeof schema>, keyword: string }) => {
@@ -32,7 +33,7 @@ export const getRestaurantsByKeyword = async ({ db, keyword }: { db: DrizzleD1Da
         throw new Error(err);
     });
 
-    return result;
+    return newGetRestaurantsByKeywordResponse(result);
 };
 
 type CreateRestaurantParams = {
@@ -67,8 +68,8 @@ export const updateRestaurant = async ({ db, req }: { db: DrizzleD1Database<type
     return result;
 }
 
-export const deleteRestaurant = async ({ db, id }: { db: DrizzleD1Database<typeof schema>, id: number }) => {
-    const result = await repository.deleteRestaurant({ db, req: { id } }).catch((err) => {
+export const deleteRestaurant = async ({ db, id, author_id }: { db: DrizzleD1Database<typeof schema>, id: number, author_id: string }) => {
+    const result = await repository.deleteRestaurant({ db, req: { id, author_id } }).catch((err) => {
         throw new Error(err);
     });
 
