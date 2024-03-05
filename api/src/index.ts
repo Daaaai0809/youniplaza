@@ -282,6 +282,22 @@ restaurantsGroup.delete('/:id', async (c) => {
 
   return c.json(res, 200);
 });
+restaurantsGroup.post('/:id/like', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+
+  const res = await restaurantService.addFavoriteRestaurant({ db: db, user_id: c.get('user_id'), restaurant_id: id });
+
+  return c.json(res, 200);
+});
+restaurantsGroup.delete('/:id/like', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+
+  const res = await restaurantService.removeFavoriteRestaurant({ db: db, user_id: c.get('user_id'), restaurant_id: id });
+
+  return c.json(res, 200);
+});
 
 const api = new Hono<{ Bindings: Bindings }>();
 

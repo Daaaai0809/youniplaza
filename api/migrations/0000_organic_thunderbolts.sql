@@ -27,9 +27,9 @@ CREATE TABLE `restaurants` (
 	`name` text NOT NULL,
 	`author_id` text,
 	`school_id` integer,
-	`prefecture_id` integer,
-	`address` text,
-	`rating` real NOT NULL,
+	`prefecture_id` integer NOT NULL,
+	`address` text NOT NULL,
+	`rating` real DEFAULT 0 NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	`updated_at` text,
 	`deleted_at` text,
@@ -88,7 +88,6 @@ CREATE TABLE `users_to_restaurants` (
 	FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `restaurants_name_unique` ON `restaurants` (`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `schools_name_unique` ON `schools` (`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `tags_name_unique` ON `tags` (`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);--> statement-breakpoint
