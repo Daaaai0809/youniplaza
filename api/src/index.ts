@@ -204,7 +204,7 @@ schoolsGroup.post('/', async (c) => {
 
   const res = await schoolService.createSchool({ db: db, req: req });
 
-  return c.json(res, 200);
+  return c.json(res, 201);
 });
 schoolsGroup.put('/:id', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
