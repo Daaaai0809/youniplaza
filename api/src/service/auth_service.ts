@@ -39,7 +39,7 @@ export const checkToken = async ({ token, db, blackList }: { token: string, db: 
         throw new Error(errorMessages.auth.notFound);
     }
 
-    return;
+    return user.id;
 };
 
 export const login = async ({ username, password, db, secret }: { username: string, password: string, db: DrizzleD1Database<typeof schema>, secret: string }) => {

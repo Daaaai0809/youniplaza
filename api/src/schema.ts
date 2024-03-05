@@ -41,12 +41,12 @@ export const schoolsRelations = relations(schools, ({ many }) => ({
 
 export const restaurants = sqliteTable('restaurants', {
     id: int("id").primaryKey(),
-    name: text("name").unique().notNull(),
+    name: text("name").notNull(),
     author_id: text("author_id").references(() => users.id),
     school_id: int("school_id").references(() => schools.id),
     prefecture_id: int("prefecture_id"),
     address: text("address"),
-    rating: real("rating").notNull(),
+    rating: real("rating").notNull().default(0),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     updated_at: text("updated_at"),
     deleted_at: text("deleted_at"),

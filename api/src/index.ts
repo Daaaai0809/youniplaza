@@ -19,7 +19,11 @@ type Bindings = {
   ENV: string
 };
 
-const app = new Hono<{ Bindings: Bindings }>();
+type Variables = {
+  user_id: string
+}
+
+const app = new Hono<{ Bindings: Bindings, Variables: Variables }>();
 
 app.use('/*', async (c, next) => {
   const token = getCookie(c, 'access_token');
@@ -34,7 +38,7 @@ app.use('/*', async (c, next) => {
 
   const db = drizzle(c.env.DB, { schema: schema });
 
-  await authService.checkToken({ token: token, db: db, blackList: c.env.TOKEN_BLACK_LIST }).catch((err) => {
+  const id = await authService.checkToken({ token: token, db: db, blackList: c.env.TOKEN_BLACK_LIST }).catch((err) => {
     if (err === errorMessages.auth.invalidToken) {
       return c.json({ message: errorMessages.auth.unauthorized }, 401);
     } else if (err === errorMessages.auth.tokenExpired) {
@@ -42,7 +46,9 @@ app.use('/*', async (c, next) => {
     } else if (err === errorMessages.auth.notFound) {
       return c.json({ message: errorMessages.auth.unauthorized }, 403);
     }
-  });
+  }) as string;
+
+  c.set('user_id', id);
 
   await next();
 });
@@ -224,10 +230,13 @@ schoolsGroup.delete('/:id', async (c) => {
   return c.json(res, 200);
 });
 
+const restaurantsGroup = new Hono<{ Bindings: Bindings, Variables: Variables }>();
+
 const api = new Hono<{ Bindings: Bindings }>();
 
 app.route('/users', usersGroup);
 app.route('/schools', schoolsGroup);
+app.route('/restaurants', restaurantsGroup);
 api.route('/auth', authGroup);
 api.route('/app', app);
 
