@@ -15,7 +15,10 @@ export const users = sqliteTable('users', {
 });
 
 export const usersRelations = relations(users, ({ one, many }) => ({
-    schools: one(schools),
+    school: one(schools, {
+        fields: [users.school_id],
+        references: [schools.id],
+    }),
     restaurants: many(restaurants),
     comments: many(comments),
     users_to_restaurants: many(users_to_restaurants),
@@ -50,8 +53,14 @@ export const restaurants = sqliteTable('restaurants', {
 });
 
 export const restaurantsRelations = relations(restaurants, ({ one, many }) => ({
-    users: one(users),
-    schools: one(schools),
+    user: one(users, {
+        fields: [restaurants.author_id],
+        references: [users.id],
+    }),
+    school: one(schools, {
+        fields: [restaurants.school_id],
+        references: [schools.id],
+    }),
     comments: many(comments),
     photos: many(photos),
     tag_to_restaurants: many(tag_to_restaurants),
@@ -77,8 +86,14 @@ export const comments = sqliteTable('comments', {
 });
 
 export const commentsRelations = relations(comments, ({ one, many }) => ({
-    users: one(users),
-    restaurants: one(restaurants),
+    user: one(users, {
+        fields: [comments.author_id],
+        references: [users.id],
+    }),
+    restaurant: one(restaurants, {
+        fields: [comments.restaurant_id],
+        references: [restaurants.id],
+    }),
     photos: many(photos),
 }));
 
@@ -104,12 +119,12 @@ export const tag_to_restaurants = sqliteTable('tag_to_restaurants', {
     pk: primaryKey({ columns: [t.tag_id, t.restaurant_id] }),
 }));
 
-export const tag_to_restaurantsRelations = relations(tag_to_restaurants, ({ one, many }) => ({
-    tags: one(tags, {
+export const tag_to_restaurantsRelations = relations(tag_to_restaurants, ({ one }) => ({
+    tag: one(tags, {
         fields: [tag_to_restaurants.tag_id],
         references: [tags.id],
     }),
-    restaurants: one(restaurants, {
+    restaurant: one(restaurants, {
         fields: [tag_to_restaurants.restaurant_id],
         references: [restaurants.id],
     }),

@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import * as authService from '@/service/auth_service';
 import * as userService from '@/service/user_service';
+import * as schoolService from '@/service/school_service';
 import * as schema from '@/schema';
 import { drizzle } from 'drizzle-orm/d1';
 import { UpdateUserRequest } from './request/user_request';
@@ -9,7 +10,7 @@ import { errorMessages } from './const/error_messages';
 import { LoginResponse } from './response/auth_response';
 import { LoginRequest, SignUpRequest } from './request/auth_request';
 import { DAY } from './const/time';
-import { GetUserByIDResponse } from './response/user_response';
+import { CreateSchoolRequest, UpdateSchoolRequest } from './request/school_request';
 
 type Bindings = {
   DB: D1Database,
@@ -162,9 +163,71 @@ usersGroup.delete('/:id', async (c) => {
   return c.json(res, 200);
 });
 
+const schoolsGroup = new Hono<{ Bindings: Bindings }>();
+
+schoolsGroup.get('/', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+
+  const res = await schoolService.getSchools({ db: db });
+
+  return c.json(res, 200);
+});
+schoolsGroup.get('/search', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const keyword = await c.req.query('keyword') || '';
+
+  const res = await schoolService.getSchoolsByKeyword({ db: db, keyword: keyword });
+
+  return c.json(res, 200);
+});
+schoolsGroup.get('/prefecture', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const prefecture_ids = await c.req.queries('prefecture_ids') || [];
+
+  const numbered_prefecture_ids = prefecture_ids.map((id) => parseInt(id));
+
+  const res = await schoolService.getSchoolsByPrefecture({ db: db, prefecture_ids: numbered_prefecture_ids });
+
+  return c.json(res, 200);
+});
+schoolsGroup.get('/:id', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+
+  const res = await schoolService.getSchoolByID({ db: db, id: id });
+
+  return c.json(res, 200);
+});
+schoolsGroup.post('/', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const req = await c.req.json<CreateSchoolRequest>();
+
+  const res = await schoolService.createSchool({ db: db, req: req });
+
+  return c.json(res, 201);
+});
+schoolsGroup.put('/:id', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+  const req = await c.req.json<UpdateSchoolRequest>();
+
+  const res = await schoolService.updateSchool({ db: db, req: { ...req, id } });
+
+  return c.json(res, 200);
+});
+schoolsGroup.delete('/:id', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+
+  const res = await schoolService.deleteSchool({ db: db, id: id });
+
+  return c.json(res, 200);
+});
+
 const api = new Hono<{ Bindings: Bindings }>();
 
 app.route('/users', usersGroup);
+app.route('/schools', schoolsGroup);
 api.route('/auth', authGroup);
 api.route('/app', app);
 
