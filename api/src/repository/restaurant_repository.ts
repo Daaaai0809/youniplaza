@@ -47,6 +47,7 @@ type CreateRestaurantParams = {
     address: string;
     prefecture_id: number;
     // school_id: number;
+    author_id: string;
 };
 
 export const createRestaurant = async ({ db, req }: IRestaurantOperationParams<CreateRestaurantParams>) => {
@@ -59,6 +60,7 @@ export const createRestaurant = async ({ db, req }: IRestaurantOperationParams<C
         address: req.address,
         prefecture_id: req.prefecture_id,
         // school_id: req.school_id,
+        author_id: req.author_id,
     }).execute();
 
     return result;
@@ -69,6 +71,7 @@ type UpdateRestaurantParams = {
     name?: string;
     address?: string;
     prefecture_id?: number;
+    // school_id?: number;
     rating?: number;
 };
 
@@ -81,6 +84,7 @@ export const updateRestaurant = async ({ db, req }: IRestaurantOperationParams<U
         name: req.name,
         address: req.address,
         prefecture_id: req.prefecture_id,
+        // school_id: req.school_id,
         rating: req.rating,
     }).where(eq(schema.restaurants.id, req.id)).execute();
 
