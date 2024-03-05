@@ -1,5 +1,5 @@
 ---
-title: unimeshi仕様書(2024/MM/DD時点)
+title: unimeshi仕様書(2024/03/05時点)
 ---
 
 # unimeshi

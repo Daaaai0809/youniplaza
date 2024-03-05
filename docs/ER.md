@@ -1,5 +1,5 @@
 ---
-title: unimeshi ER図 (最終更新2024/03/01)
+title: unimeshi ER図 (最終更新2024/03/05)
 ---
 ```mermaid
 erDiagram
@@ -29,6 +29,7 @@ schools {
 users_to_restaurants {
     text user_id PK "ユーザID"
     int restaurant_id PK "飲食店ID"
+    text created_at "作成日時"
 }
 
 restaurants {

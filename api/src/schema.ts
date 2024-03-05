@@ -7,6 +7,7 @@ export const users = sqliteTable('users', {
     name: text("name").notNull(),
     password: text("password").notNull(),
     email: text("email").unique().notNull(),
+    // icon_url: text("icon_url"),
     school_id: int("school_id").references(() => schools.id),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     updated_at: text("updated_at"),
@@ -17,6 +18,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
     schools: one(schools),
     restaurants: many(restaurants),
     comments: many(comments),
+    users_to_restaurants: many(users_to_restaurants),
 }));
 
 export const schools = sqliteTable('schools', {
@@ -51,7 +53,17 @@ export const restaurantsRelations = relations(restaurants, ({ one, many }) => ({
     users: one(users),
     schools: one(schools),
     comments: many(comments),
+    photos: many(photos),
     tag_to_restaurants: many(tag_to_restaurants),
+    users_to_restaurants: many(users_to_restaurants),
+}));
+
+export const users_to_restaurants = sqliteTable('users_to_restaurants', {
+    user_id: text("user_id").references(() => users.id),
+    restaurant_id: int("restaurant_id").references(() => restaurants.id),
+    created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
+}, (t) => ({
+    pk: primaryKey({ columns: [t.user_id, t.restaurant_id] }),
 }));
 
 export const comments = sqliteTable('comments', {
@@ -64,9 +76,10 @@ export const comments = sqliteTable('comments', {
     deleted_at: text("deleted_at"),
 });
 
-export const commentsRelations = relations(comments, ({ one }) => ({
+export const commentsRelations = relations(comments, ({ one, many }) => ({
     users: one(users),
     restaurants: one(restaurants),
+    photos: many(photos),
 }));
 
 export const tags = sqliteTable('tags', {
@@ -101,3 +114,13 @@ export const tag_to_restaurantsRelations = relations(tag_to_restaurants, ({ one,
         references: [restaurants.id],
     }),
 }));
+
+export const photos = sqliteTable('photos', {
+    id: int("id").primaryKey(),
+    comment_id: int("comment_id").references(() => comments.id),
+    restaurant_id: int("restaurant_id").references(() => restaurants.id),
+    url: text("url").notNull(),
+    created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
+    updated_at: text("updated_at"), 
+    deleted_at: text("deleted_at"),
+});
