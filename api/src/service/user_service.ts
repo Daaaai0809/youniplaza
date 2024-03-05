@@ -32,7 +32,7 @@ export const getUserByKeyword = async ({ db, keyword }: { db: DrizzleD1Database<
     return newGetUserByKeywordResponse(result);
 }
 
-export const updateUser = async ({ db, req }: { db: DrizzleD1Database<typeof schema>, req: UpdateUserRequest }) => {
+export const updateUser = async ({ db, req }: { db: DrizzleD1Database<typeof schema>, req: UpdateUserRequest & { id: string } }) => {
   const result = await repository.updateUser({ db, req }).catch((err) => {
     throw new Error(err);
   });

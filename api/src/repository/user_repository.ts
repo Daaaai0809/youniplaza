@@ -67,7 +67,7 @@ export const createUser = async ({ db, req }: IUserOperationParams<CreateUserReq
         name: req.name,
         password: hashedPassword,
         email: req.email,
-        // school_id: req.school_id,
+        school_id: req.school_id,
     }).execute().catch((err) => {
         throw new Error(err);
     });
@@ -75,7 +75,7 @@ export const createUser = async ({ db, req }: IUserOperationParams<CreateUserReq
     return result;
 }
 
-export const updateUser = async ({ db, req }: IUserOperationParams<UpdateUserRequest>) => {
+export const updateUser = async ({ db, req }: IUserOperationParams<UpdateUserRequest & { id: string }>) => {
     if (!req) {
         throw new Error('Invalid request');
     }
@@ -85,7 +85,7 @@ export const updateUser = async ({ db, req }: IUserOperationParams<UpdateUserReq
         name: req.name,
         password: req.password ? await hashPassword(req.password) : undefined,
         email: req.email,
-        // school_id: req.school_id,
+        school_id: req.school_id,
     }).where(eq(schema.users.id, req.id)).execute().catch((err) => {
         throw new Error(err);
     });

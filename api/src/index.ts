@@ -162,9 +162,12 @@ usersGroup.delete('/:id', async (c) => {
   return c.json(res, 200);
 });
 
+const schoolsGroup = new Hono<{ Bindings: Bindings }>();
+
 const api = new Hono<{ Bindings: Bindings }>();
 
 app.route('/users', usersGroup);
+app.route('/schools', schoolsGroup);
 api.route('/auth', authGroup);
 api.route('/app', app);
 
