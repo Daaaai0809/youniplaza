@@ -139,3 +139,14 @@ export const photos = sqliteTable('photos', {
     updated_at: text("updated_at"), 
     deleted_at: text("deleted_at"),
 });
+
+export const photosRelations = relations(photos, ({ one }) => ({
+    comment: one(comments, {
+        fields: [photos.comment_id],
+        references: [comments.id],
+    }),
+    restaurant: one(restaurants, {
+        fields: [photos.restaurant_id],
+        references: [restaurants.id],
+    }),
+}));
