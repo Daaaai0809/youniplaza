@@ -41,3 +41,13 @@ export const deleteTagToSpotBySpotId = async ({ db, req }: ITagToSpotOperationPa
 
     return result;
 }
+
+export const deleteTagToSpotByTagId = async ({ db, req }: ITagToSpotOperationParams<{ tag_id: number }>) => {
+    if (!req) {
+        throw new Error('Invalid request');
+    }
+
+    const result = await db.delete(schema.tag_to_spots).where(eq(schema.tag_to_spots.tag_id, req.tag_id)).execute();
+
+    return result;
+}

@@ -10,7 +10,7 @@ export const users = sqliteTable('users', {
     // icon_url: text("icon_url"),
     school_id: int("school_id").references(() => schools.id),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
-    updated_at: text("updated_at"),
+    updated_at: text("updated_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     deleted_at: text("deleted_at"),
 });
 
@@ -30,7 +30,7 @@ export const schools = sqliteTable('schools', {
     prefecture_id: int("prefecture_id").notNull(),
     address: text("address").notNull(),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
-    updated_at: text("updated_at"), 
+    updated_at: text("updated_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     deleted_at: text("deleted_at"),
 });
 
@@ -48,7 +48,7 @@ export const spots = sqliteTable('spots', {
     address: text("address").notNull(),
     rating: real("rating").notNull().default(0),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
-    updated_at: text("updated_at"),
+    updated_at: text("updated_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     deleted_at: text("deleted_at"),
 });
 
@@ -81,7 +81,7 @@ export const comments = sqliteTable('comments', {
     spot_id: int("spot_id").references(() => spots.id),
     content: text("content").notNull(),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
-    updated_at: text("updated_at"), 
+    updated_at: text("updated_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     deleted_at: text("deleted_at"),
 });
 
@@ -99,9 +99,9 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
 
 export const tags = sqliteTable('tags', {
     id: int("id").primaryKey(),
-    name: text("name").unique().notNull(),
+    name: text("name").notNull(),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
-    updated_at: text("updated_at"), 
+    updated_at: text("updated_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     deleted_at: text("deleted_at"),
 });
 
@@ -110,16 +110,16 @@ export const tagsRelations = relations(tags, ({ many }) => ({
 }));
 
 export const tag_to_spots = sqliteTable('tag_to_spots', {
-    tag_id: int("tag_id").references(() => tags.id, {onDelete: 'cascade'}),
-    spot_id: int("spot_id").references(() => spots.id, {onDelete: 'cascade'}),
+    tag_id: int("tag_id").references(() => tags.id, {onDelete: 'cascade'}).notNull(),
+    spot_id: int("spot_id").references(() => spots.id, {onDelete: 'cascade'}).notNull(),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
-    updated_at: text("updated_at"), 
+    updated_at: text("updated_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     deleted_at: text("deleted_at"),
 }, (t) => ({
     pk: primaryKey({ columns: [t.tag_id, t.spot_id] }),
 }));
 
-export const tag_to_spotsRelations = relations(tag_to_spots, ({ one }) => ({
+export const tagToSpotsRelations = relations(tag_to_spots, ({ one }) => ({
     tag: one(tags, {
         fields: [tag_to_spots.tag_id],
         references: [tags.id],
@@ -135,7 +135,7 @@ export const photos = sqliteTable('photos', {
     spot_id: int("spot_id").references(() => spots.id),
     url: text("url").notNull(),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
-    updated_at: text("updated_at"), 
+    updated_at: text("updated_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     deleted_at: text("deleted_at"),
 });
 

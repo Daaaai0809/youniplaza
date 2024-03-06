@@ -10,6 +10,15 @@ interface ISpotOperationParams<T = any> {
 export const getAllSpots = async ({ db }: ISpotOperationParams) => {
     const result = await db.query.spots.findMany({
         where: ((spots, { isNull }) => isNull(spots.deleted_at)),
+        with: {
+            tag_to_spots: {
+                with: {
+                    tag: {
+                        columns: {id: true, name: true},
+                    }
+                }
+            },
+        }
     });
 
     return result;
@@ -24,11 +33,63 @@ export const getSpotById = async ({ db, req }: ISpotOperationParams<{ id: number
         where: ((spots, { and, eq, isNull }) => and(eq(spots.id, req.id), isNull(spots.deleted_at))),
         with: {
             comments: true,
+            tag_to_spots: {
+                columns: {},
+                with: {
+                    tag: {
+                        columns: {id: true, name: true},
+                    }
+                }
+            },
+        }
+    });
+
+    console.log(result?.tag_to_spots);
+
+    return result;
+};
+
+export const getSpotsBySchoolId = async ({ db, req }: ISpotOperationParams<{ school_id: number }>) => {
+    if (!req) {
+        throw new Error('Invalid request');
+    }
+
+    const result = await db.query.spots.findMany({
+        where: ((spots, { and, eq, isNull }) => and(eq(spots.school_id, req.school_id), isNull(spots.deleted_at))),
+        with: {
+            tag_to_spots: {
+                with: {
+                    tag: {
+                        columns: {id: true, name: true},
+                    }
+                }
+            },
         }
     });
 
     return result;
 };
+
+export const getSpotsBySchoolIdAndKeyword = async ({ db, req }: ISpotOperationParams<{ school_id: number, keyword: string }>) => {
+    if (!req) {
+        throw new Error('Invalid request');
+    }
+
+    const result = await db.query.spots.findMany({
+        where: ((spots, { and, eq, like, isNull }) => and(eq(spots.school_id, req.school_id), like(spots.name, `%${req.keyword}%`), isNull(spots.deleted_at))),
+        with: {
+            tag_to_spots: {
+                with: {
+                    tag: {
+                        columns: {id: true, name: true},
+                    }
+                }
+            },
+        }
+    });
+
+    return result;
+}
 
 export const getSpotsByKeyword = async ({ db, req }: ISpotOperationParams<{ keyword: string }>) => {
     if (!req) {
@@ -37,6 +98,15 @@ export const getSpotsByKeyword = async ({ db, req }: ISpotOperationParams<{ keyw
 
     const result = await db.query.spots.findMany({
         where: ((spots, { and, like, isNull }) => and(like(spots.name, `%${req.keyword}%`), isNull(spots.deleted_at))),
+        with: {
+            tag_to_spots: {
+                with: {
+                    tag: {
+                        columns: {id: true, name: true},
+                    }
+                }
+            },
+        }
     });
 
     return result;

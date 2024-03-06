@@ -1,6 +1,7 @@
 import { newGetAllTagsResponse, newGetTagByIDResponse, newGetTagsByKeywordResponse } from '@/response/tag_reponse';
 import * as schema from '@/schema';
 import * as tag_repository from '@/repository/tag_repository';
+import * as tag_to_spots_repository from '@/repository/tag_to_spots_repository';
 import { DrizzleD1Database } from 'drizzle-orm/d1';
 
 interface ITagOperationParams<T = any> {
@@ -63,6 +64,10 @@ export const updateTag = async ({ db, req }: ITagOperationParams<UpdateTagParams
 
 export const deleteTag = async ({ db, id }: { db: DrizzleD1Database<typeof schema>, id: number }) => {
     const result = await tag_repository.deleteTag({ db, req: { id } }).catch((err) => {
+        throw new Error(err);
+    });
+
+    await tag_to_spots_repository.deleteTagToSpotByTagId({ db, req: { tag_id: id } }).catch((err) => {
         throw new Error(err);
     });
 

@@ -1,3 +1,4 @@
+import { Tag } from "./tag_reponse";
 import { User } from "./user_response";
 
 interface ISpot {
@@ -7,6 +8,9 @@ interface ISpot {
     prefecture_id: number;
     rating: number;
     user?: User | null;
+    tag_to_spots?: {
+        tag: Tag;
+    }[];
 }
 
 export type Spot = {
@@ -16,6 +20,7 @@ export type Spot = {
     prefecture_id: number;
     rating: number;
     author?: User | null;
+    tags?: Tag[];
 }
 
 export type GetAllSpotsResponse = {
@@ -33,19 +38,30 @@ export type GetSpotsByKeywordResponse = {
 export const newGetAllSpotsResponse = (spots: ISpot[]): GetAllSpotsResponse => {
     return {
         spots: spots.map((spot) => {
+            const tags = spot.tag_to_spots?.map((tagToSpot) => {
+                return tagToSpot.tag;
+            });
+
             return {
                 id: spot.id,
                 name: spot.name,
                 address: spot.address,
                 prefecture_id: spot.prefecture_id,
                 rating: spot.rating,
-                author: spot.user
+                author: spot.user,
+                tags: tags || [],
             }
         }),
     };
 };
 
 export const newGetSpotByIDResponse = (spot: ISpot): GetSpotByIDResponse => {
+    const tags = spot.tag_to_spots?.map((tagToSpot) => {
+        console.log(tagToSpot.tag);
+
+        return tagToSpot.tag;
+    }) || [];
+
     return {
         spot: {
             id: spot.id,
@@ -54,6 +70,7 @@ export const newGetSpotByIDResponse = (spot: ISpot): GetSpotByIDResponse => {
             prefecture_id: spot.prefecture_id,
             rating: spot.rating,
             author: spot.user,
+            tags: tags,
         }
     };
 };
@@ -61,6 +78,10 @@ export const newGetSpotByIDResponse = (spot: ISpot): GetSpotByIDResponse => {
 export const newGetSpotsByKeywordResponse = (spots: ISpot[]): GetSpotsByKeywordResponse => {
     return {
         spots: spots.map((spot) => {
+            const tags = spot.tag_to_spots?.map((tagToSpot) => {
+                return tagToSpot.tag;
+            });
+
             return {
                 id: spot.id,
                 name: spot.name,
@@ -68,6 +89,7 @@ export const newGetSpotsByKeywordResponse = (spots: ISpot[]): GetSpotsByKeywordR
                 prefecture_id: spot.prefecture_id,
                 rating: spot.rating,
                 author: spot.user,
+                tags: tags || [],
             };
         }),
     };

@@ -29,6 +29,7 @@ type Variables = {
 
 const app = new Hono<{ Bindings: Bindings, Variables: Variables }>();
 
+// 正規表現でpost, put, deleteのみのパスを指定する
 app.use('/*', async (c, next) => {
   const token = getCookie(c, 'access_token');
   if (!token) {
@@ -276,15 +277,15 @@ spotsGroup.put('/:id', async (c) => {
 
   const res = await spotService.updateSpot({ db: db, req: { ...req, id } });
 
-  return c.json(res, 200);
+  return c.json('', 200);
 });
 spotsGroup.delete('/:id', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const id = await Number(c.req.param('id'));
 
-  const res = await spotService.deleteSpot({ db: db, req: { id: id, author_id: c.get('user_id') }});
+  await spotService.deleteSpot({ db: db, req: { id: id, author_id: c.get('user_id') }});
 
-  return c.json(res, 200);
+  return c.json('', 200);
 });
 spotsGroup.post('/:id/like', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });

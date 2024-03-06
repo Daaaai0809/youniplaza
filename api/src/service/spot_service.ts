@@ -73,11 +73,15 @@ type UpdateSpotParams = {
 };
 
 export const updateSpot = async ({ db, req }: ISpotOperationParams<UpdateSpotParams>) => {
-    const result = await spot_repository.updateSpot({ db, req }).catch((err) => {
+    if (!req) {
+        throw new Error('Invalid request');
+    }
+
+    await spot_repository.updateSpot({ db, req }).catch((err) => {
         throw new Error(err);
     });
 
-    if (req?.tag_ids) {
+    if (req.tag_ids) {
         await tag_to_spots_repository.deleteTagToSpotBySpotId({ db, req: { spot_id: req.id } }).catch((err) => {
             throw new Error(err);
         });
@@ -87,15 +91,23 @@ export const updateSpot = async ({ db, req }: ISpotOperationParams<UpdateSpotPar
         });
     }
 
-    return result;
-}
+    return;
+};
 
 export const deleteSpot = async ({ db, req }: ISpotOperationParams<{ id: number, author_id: string }>) => {
-    const result = await spot_repository.deleteSpot({ db, req }).catch((err) => {
+    if (!req) {
+        throw new Error('Invalid request');
+    }
+
+    await spot_repository.deleteSpot({ db, req }).catch((err) => {
         throw new Error(err);
     });
 
-    return result;
+    await tag_to_spots_repository.deleteTagToSpotBySpotId({ db, req: { spot_id: req.id } }).catch((err) => {
+        throw new Error(err);
+    });
+
+    return;
 }
 
 export const addFavoriteSpot = async ({ db, user_id, spot_id }: { db: DrizzleD1Database<typeof schema>, user_id: string, spot_id: number }) => {

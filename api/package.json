@@ -3,8 +3,8 @@
     "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy --minify src/index.ts",
     "generate": "drizzle-kit generate:sqlite --out migrations --schema ./src/schema.ts",
-    "migrate:local": "wrangler d1 migrations apply unimeshi-db --local",
-    "migrate:dev": "wrangler d1 migrations apply unimeshi-db"
+    "migrate:local": "wrangler d1 migrations apply youniplaza --local",
+    "migrate:dev": "wrangler d1 migrations apply youniplaza"
   },
   "dependencies": {
     "@types/uuid": "^9.0.8",
