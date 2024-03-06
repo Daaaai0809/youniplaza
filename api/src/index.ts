@@ -232,16 +232,16 @@ schoolsGroup.delete('/:id', async (c) => {
   return c.json(res, 200);
 });
 
-const SpotsGroup = new Hono<{ Bindings: Bindings, Variables: Variables }>();
+const spotsGroup = new Hono<{ Bindings: Bindings, Variables: Variables }>();
 
-SpotsGroup.get('/', async (c) => {
+spotsGroup.get('/', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
 
   const res = await spotService.getAllSpots({ db: db });
 
   return c.json(res, 200);
 });
-SpotsGroup.get('/search', async (c) => {
+spotsGroup.get('/search', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const keyword = await c.req.query('keyword') || '';
 
@@ -249,7 +249,7 @@ SpotsGroup.get('/search', async (c) => {
 
   return c.json(res, 200);
 });
-SpotsGroup.get('/:id', async (c) => {
+spotsGroup.get('/:id', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const id = await Number(c.req.param('id'));
 
@@ -257,7 +257,7 @@ SpotsGroup.get('/:id', async (c) => {
 
   return c.json(res, 200);
 });
-SpotsGroup.post('/', async (c) => {
+spotsGroup.post('/', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const req = await c.req.json<CreateSpotRequest>();
 
@@ -265,7 +265,7 @@ SpotsGroup.post('/', async (c) => {
 
   return c.json(res, 201);
 });
-SpotsGroup.put('/:id', async (c) => {
+spotsGroup.put('/:id', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const id = await Number(c.req.param('id'));
   const req = await c.req.json<UpdateSpotRequest>();
@@ -274,7 +274,7 @@ SpotsGroup.put('/:id', async (c) => {
 
   return c.json(res, 200);
 });
-SpotsGroup.delete('/:id', async (c) => {
+spotsGroup.delete('/:id', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const id = await Number(c.req.param('id'));
 
@@ -282,7 +282,7 @@ SpotsGroup.delete('/:id', async (c) => {
 
   return c.json(res, 200);
 });
-SpotsGroup.post('/:id/like', async (c) => {
+spotsGroup.post('/:id/like', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const id = await Number(c.req.param('id'));
 
@@ -290,7 +290,7 @@ SpotsGroup.post('/:id/like', async (c) => {
 
   return c.json(res, 200);
 });
-SpotsGroup.delete('/:id/like', async (c) => {
+spotsGroup.delete('/:id/like', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const id = await Number(c.req.param('id'));
 
@@ -303,7 +303,7 @@ const api = new Hono<{ Bindings: Bindings }>();
 
 app.route('/users', usersGroup);
 app.route('/schools', schoolsGroup);
-app.route('/spots', SpotsGroup);
+app.route('/spots', spotsGroup);
 api.route('/auth', authGroup);
 api.route('/app', app);
 
