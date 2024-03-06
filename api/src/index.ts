@@ -4,6 +4,7 @@ import * as authService from '@/service/auth_service';
 import * as userService from '@/service/user_service';
 import * as schoolService from '@/service/school_service';
 import * as spotService from '@/service/spot_service';
+import * as tagService from '@/service/tag_service';
 import * as schema from '@/schema';
 import { drizzle } from 'drizzle-orm/d1';
 import { UpdateUserRequest } from './request/user_request';
@@ -13,6 +14,7 @@ import { LoginRequest, SignUpRequest } from './request/auth_request';
 import { DAY } from './const/time';
 import { CreateSchoolRequest, UpdateSchoolRequest } from './request/school_request';
 import { CreateSpotRequest, UpdateSpotRequest } from './request/spot_request';
+import { CreateTagRequest, UpdateTagRequest } from './request/tag_repository';
 
 type Bindings = {
   DB: D1Database,
@@ -302,6 +304,55 @@ spotsGroup.delete('/:id/like', async (c) => {
 });
 
 const tagGroup = new Hono<{ Bindings: Bindings }>();
+
+tagGroup.get('/', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+
+  const res = await tagService.getAllTags({ db: db });
+
+  return c.json(res, 200);
+});
+tagGroup.get('/search', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const keyword = await c.req.query('keyword') || '';
+
+  const res = await tagService.getTagsByKeyword({ db: db, req: { keyword: keyword }});
+
+  return c.json(res, 200);
+});
+tagGroup.get('/:id', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+
+  const res = await tagService.getTagById({ db: db, req: { id: id }});
+
+  return c.json(res, 200);
+});
+tagGroup.post('/', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const req = await c.req.json<CreateTagRequest>();
+
+  const res = await tagService.createTag({ db: db, req: req });
+
+  return c.json(res, 201);
+});
+tagGroup.put('/:id', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+  const req = await c.req.json<UpdateTagRequest>();
+
+  const res = await tagService.updateTag({ db: db, req: { ...req, id } });
+
+  return c.json(res, 200);
+});
+tagGroup.delete('/:id', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+
+  const res = await tagService.deleteTag({ db: db, id: id });
+
+  return c.json(res, 200);
+});
 
 const api = new Hono<{ Bindings: Bindings }>();
 
