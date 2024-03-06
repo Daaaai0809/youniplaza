@@ -19,9 +19,9 @@ export const usersRelations = relations(users, ({ one, many }) => ({
         fields: [users.school_id],
         references: [schools.id],
     }),
-    restaurants: many(restaurants),
+    spots: many(spots),
     comments: many(comments),
-    users_to_restaurants: many(users_to_restaurants),
+    users_to_spots: many(users_to_spots),
 }));
 
 export const schools = sqliteTable('schools', {
@@ -36,10 +36,10 @@ export const schools = sqliteTable('schools', {
 
 export const schoolsRelations = relations(schools, ({ many }) => ({
     users: many(users),
-    restaurants: many(restaurants),
+    spots: many(spots),
 }));
 
-export const restaurants = sqliteTable('restaurants', {
+export const spots = sqliteTable('spots', {
     id: int("id").primaryKey(),
     name: text("name").notNull(),
     author_id: text("author_id").references(() => users.id),
@@ -52,49 +52,48 @@ export const restaurants = sqliteTable('restaurants', {
     deleted_at: text("deleted_at"),
 });
 
-export const restaurantsRelations = relations(restaurants, ({ one, many }) => ({
+export const spotsRelations = relations(spots, ({ one, many }) => ({
     user: one(users, {
-        fields: [restaurants.author_id],
+        fields: [spots.author_id],
         references: [users.id],
     }),
     school: one(schools, {
-        fields: [restaurants.school_id],
+        fields: [spots.school_id],
         references: [schools.id],
     }),
     comments: many(comments),
     photos: many(photos),
-    tag_to_restaurants: many(tag_to_restaurants),
-    users_to_restaurants: many(users_to_restaurants),
+    tag_to_spots: many(tag_to_spots),
+    users_to_spots: many(users_to_spots),
 }));
 
-export const users_to_restaurants = sqliteTable('users_to_restaurants', {
+export const users_to_spots = sqliteTable('users_to_spots', {
     user_id: text("user_id").references(() => users.id),
-    restaurant_id: int("restaurant_id").references(() => restaurants.id),
+    spot_id: int("spot_id").references(() => spots.id),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
 }, (t) => ({
-    pk: primaryKey({ columns: [t.user_id, t.restaurant_id] }),
+    pk: primaryKey({ columns: [t.user_id, t.spot_id] }),
 }));
 
 export const comments = sqliteTable('comments', {
     id: int("id").primaryKey(),
     author_id: text("author_id").references(() => users.id),
-    restaurant_id: int("restaurant_id").references(() => restaurants.id),
+    spot_id: int("spot_id").references(() => spots.id),
     content: text("content").notNull(),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     updated_at: text("updated_at"), 
     deleted_at: text("deleted_at"),
 });
 
-export const commentsRelations = relations(comments, ({ one, many }) => ({
+export const commentsRelations = relations(comments, ({ one }) => ({
     user: one(users, {
         fields: [comments.author_id],
         references: [users.id],
     }),
-    restaurant: one(restaurants, {
-        fields: [comments.restaurant_id],
-        references: [restaurants.id],
+    spot: one(spots, {
+        fields: [comments.spot_id],
+        references: [spots.id],
     }),
-    photos: many(photos),
 }));
 
 export const tags = sqliteTable('tags', {
@@ -106,34 +105,33 @@ export const tags = sqliteTable('tags', {
 });
 
 export const tagsRelations = relations(tags, ({ many }) => ({
-    tag_to_restaurants: many(tag_to_restaurants),
+    tag_to_spots: many(tag_to_spots),
 }));
 
-export const tag_to_restaurants = sqliteTable('tag_to_restaurants', {
+export const tag_to_spots = sqliteTable('tag_to_spots', {
     tag_id: int("tag_id").references(() => tags.id),
-    restaurant_id: int("restaurant_id").references(() => restaurants.id),
+    spot_id: int("spot_id").references(() => spots.id),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     updated_at: text("updated_at"), 
     deleted_at: text("deleted_at"),
 }, (t) => ({
-    pk: primaryKey({ columns: [t.tag_id, t.restaurant_id] }),
+    pk: primaryKey({ columns: [t.tag_id, t.spot_id] }),
 }));
 
-export const tag_to_restaurantsRelations = relations(tag_to_restaurants, ({ one }) => ({
+export const tag_to_spotsRelations = relations(tag_to_spots, ({ one }) => ({
     tag: one(tags, {
-        fields: [tag_to_restaurants.tag_id],
+        fields: [tag_to_spots.tag_id],
         references: [tags.id],
     }),
-    restaurant: one(restaurants, {
-        fields: [tag_to_restaurants.restaurant_id],
-        references: [restaurants.id],
+    spot: one(spots, {
+        fields: [tag_to_spots.spot_id],
+        references: [spots.id],
     }),
 }));
 
 export const photos = sqliteTable('photos', {
     id: int("id").primaryKey(),
-    comment_id: int("comment_id").references(() => comments.id),
-    restaurant_id: int("restaurant_id").references(() => restaurants.id),
+    spot_id: int("spot_id").references(() => spots.id),
     url: text("url").notNull(),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     updated_at: text("updated_at"), 
@@ -141,12 +139,8 @@ export const photos = sqliteTable('photos', {
 });
 
 export const photosRelations = relations(photos, ({ one }) => ({
-    comment: one(comments, {
-        fields: [photos.comment_id],
-        references: [comments.id],
-    }),
-    restaurant: one(restaurants, {
-        fields: [photos.restaurant_id],
-        references: [restaurants.id],
+    spot: one(spots, {
+        fields: [photos.spot_id],
+        references: [spots.id],
     }),
 }));

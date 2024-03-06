@@ -3,7 +3,7 @@ import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import * as authService from '@/service/auth_service';
 import * as userService from '@/service/user_service';
 import * as schoolService from '@/service/school_service';
-import * as restaurantService from '@/service/restaurant_service';
+import * as spotService from '@/service/spot_service';
 import * as schema from '@/schema';
 import { drizzle } from 'drizzle-orm/d1';
 import { UpdateUserRequest } from './request/user_request';
@@ -12,7 +12,7 @@ import { LoginResponse } from './response/auth_response';
 import { LoginRequest, SignUpRequest } from './request/auth_request';
 import { DAY } from './const/time';
 import { CreateSchoolRequest, UpdateSchoolRequest } from './request/school_request';
-import { CreateRestaurantRequest, UpdateRestaurantRequest } from './request/restaurant_request';
+import { CreateSpotRequest, UpdateSpotRequest } from './request/spot_request';
 
 type Bindings = {
   DB: D1Database,
@@ -232,69 +232,69 @@ schoolsGroup.delete('/:id', async (c) => {
   return c.json(res, 200);
 });
 
-const restaurantsGroup = new Hono<{ Bindings: Bindings, Variables: Variables }>();
+const SpotsGroup = new Hono<{ Bindings: Bindings, Variables: Variables }>();
 
-restaurantsGroup.get('/', async (c) => {
+SpotsGroup.get('/', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
 
-  const res = await restaurantService.getAllRestaurants({ db: db });
+  const res = await spotService.getAllSpots({ db: db });
 
   return c.json(res, 200);
 });
-restaurantsGroup.get('/search', async (c) => {
+SpotsGroup.get('/search', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const keyword = await c.req.query('keyword') || '';
 
-  const res = await restaurantService.getRestaurantsByKeyword({ db: db, keyword: keyword });
+  const res = await spotService.getSpotsByKeyword({ db: db, req: { keyword: keyword }});
 
   return c.json(res, 200);
 });
-restaurantsGroup.get('/:id', async (c) => {
+SpotsGroup.get('/:id', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const id = await Number(c.req.param('id'));
 
-  const res = await restaurantService.getRestaurantById({ db: db, id: id });
+  const res = await spotService.getSpotById({ db: db, req: { id: id }});
 
   return c.json(res, 200);
 });
-restaurantsGroup.post('/', async (c) => {
+SpotsGroup.post('/', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
-  const req = await c.req.json<CreateRestaurantRequest>();
+  const req = await c.req.json<CreateSpotRequest>();
 
-  const res = await restaurantService.createRestaurant({ db: db, req: { ...req, author_id: c.get('user_id') } });
+  const res = await spotService.createSpot({ db: db, req: { ...req, author_id: c.get('user_id') } });
 
   return c.json(res, 201);
 });
-restaurantsGroup.put('/:id', async (c) => {
+SpotsGroup.put('/:id', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const id = await Number(c.req.param('id'));
-  const req = await c.req.json<UpdateRestaurantRequest>();
+  const req = await c.req.json<UpdateSpotRequest>();
 
-  const res = await restaurantService.updateRestaurant({ db: db, req: { ...req, id } });
+  const res = await spotService.updateSpot({ db: db, req: { ...req, id } });
 
   return c.json(res, 200);
 });
-restaurantsGroup.delete('/:id', async (c) => {
+SpotsGroup.delete('/:id', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const id = await Number(c.req.param('id'));
 
-  const res = await restaurantService.deleteRestaurant({ db: db, id: id, author_id: c.get('user_id') });
+  const res = await spotService.deleteSpot({ db: db, req: { id: id, author_id: c.get('user_id') }});
 
   return c.json(res, 200);
 });
-restaurantsGroup.post('/:id/like', async (c) => {
+SpotsGroup.post('/:id/like', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const id = await Number(c.req.param('id'));
 
-  const res = await restaurantService.addFavoriteRestaurant({ db: db, user_id: c.get('user_id'), restaurant_id: id });
+  const res = await spotService.addFavoriteSpot({ db: db, user_id: c.get('user_id'), spot_id: id });
 
   return c.json(res, 200);
 });
-restaurantsGroup.delete('/:id/like', async (c) => {
+SpotsGroup.delete('/:id/like', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const id = await Number(c.req.param('id'));
 
-  const res = await restaurantService.removeFavoriteRestaurant({ db: db, user_id: c.get('user_id'), restaurant_id: id });
+  const res = await spotService.removeFavoriteSpot({ db: db, user_id: c.get('user_id'), spot_id: id });
 
   return c.json(res, 200);
 });
@@ -303,7 +303,7 @@ const api = new Hono<{ Bindings: Bindings }>();
 
 app.route('/users', usersGroup);
 app.route('/schools', schoolsGroup);
-app.route('/restaurants', restaurantsGroup);
+app.route('/Spots', SpotsGroup);
 api.route('/auth', authGroup);
 api.route('/app', app);
 

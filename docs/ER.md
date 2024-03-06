@@ -28,12 +28,12 @@ schools {
 
 users_to_restaurants {
     text user_id PK "ユーザID"
-    int restaurant_id PK "飲食店ID"
+    int restaurant_id PK "スポットID"
     text created_at "作成日時"
 }
 
-restaurants {
-    int id PK "飲食店ID"
+spots {
+    int id PK "スポットID"
     text name "名前"
     text author_id FK "投稿者ID"
     int school_id FK "学校ID"
@@ -48,8 +48,9 @@ restaurants {
 comments { 
     int id PK "コメントID"
     text author_id FK "投稿者ID"
-    int restaurant_id FK "飲食店ID"
+    int restaurant_id FK "スポットID"
     text content "内容"
+    int rating "おすすめ度"
     text created_at "投稿日時"
     text updated_at "更新日時"
     text deleted_at "削除日時"
@@ -58,7 +59,7 @@ comments {
 photos {
     int id PK "写真ID"
     int comment_id FK "コメントID"
-    int restaurants_id FK "飲食店ID"
+    int spot_id FK "スポットID"
     text path "写真のパス or key"
     text created_at "作成日時"
     text updated_at "更新日時"
@@ -75,21 +76,20 @@ tags {
 
 tag_to_restaurants {
     int tag_id PK "タグID"
-    int restaurant_id PK "飲食店ID"
+    int restaurant_id PK "スポットID"
     text created_at "投稿日時"
     text updated_at "更新日時"
     text deleted_at "削除日時"
 }
 
-users ||--o{ restaurants : "飲食店の投稿"
+users ||--o{ spots : "おすすめスポットの投稿"
 users ||--o{ comments : "ユーザーが投稿したコメント"
-users ||--o{ users_to_restaurants : "お気に入り飲食店m2m"
-schools ||--o{ restaurants : "学校周辺の飲食店"
+users ||--o{ users_to_restaurants : "お気に入りスポットm2m"
+schools ||--o{ spots : "学校周辺のスポット"
 schools ||--o{ users : "所属大学"
-restaurants ||--o{ comments : "飲食店に対するコメント"
-restaurants ||--o{ tag_to_restaurants : "m2m"
-restaurants ||--o{ users_to_restaurants : "お気に入り飲食店m2m"
-restaurants ||--o{ photos : "飲食店のコメントに投稿された写真"
+spots ||--o{ comments : "スポットに対するコメント"
+spots ||--o{ tag_to_restaurants : "m2m"
+spots ||--o{ users_to_restaurants : "お気に入りスポットm2m"
+spots ||--o{ photos : "スポットのコメントに投稿された写真"
 tags ||--o{ tag_to_restaurants : "m2m"
-comments ||--o{ photos : "コメントに添付された写真"
 ```
