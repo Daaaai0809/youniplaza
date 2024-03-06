@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "9f8542c4-f46e-4761-8b6c-e50572fdb77d",
+  "id": "30eb1241-ddca-45b9-8e68-05665cd85055",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "comments": {
@@ -21,8 +21,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "restaurant_id": {
-          "name": "restaurant_id",
+        "spot_id": {
+          "name": "spot_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -73,12 +73,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "comments_restaurant_id_restaurants_id_fk": {
-          "name": "comments_restaurant_id_restaurants_id_fk",
+        "comments_spot_id_spots_id_fk": {
+          "name": "comments_spot_id_spots_id_fk",
           "tableFrom": "comments",
-          "tableTo": "restaurants",
+          "tableTo": "spots",
           "columnsFrom": [
-            "restaurant_id"
+            "spot_id"
           ],
           "columnsTo": [
             "id"
@@ -100,15 +100,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "comment_id": {
-          "name": "comment_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "restaurant_id": {
-          "name": "restaurant_id",
+        "spot_id": {
+          "name": "spot_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -146,140 +139,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "photos_comment_id_comments_id_fk": {
-          "name": "photos_comment_id_comments_id_fk",
+        "photos_spot_id_spots_id_fk": {
+          "name": "photos_spot_id_spots_id_fk",
           "tableFrom": "photos",
-          "tableTo": "comments",
+          "tableTo": "spots",
           "columnsFrom": [
-            "comment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "photos_restaurant_id_restaurants_id_fk": {
-          "name": "photos_restaurant_id_restaurants_id_fk",
-          "tableFrom": "photos",
-          "tableTo": "restaurants",
-          "columnsFrom": [
-            "restaurant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "restaurants": {
-      "name": "restaurants",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "author_id": {
-          "name": "author_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "school_id": {
-          "name": "school_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "prefecture_id": {
-          "name": "prefecture_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "address": {
-          "name": "address",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "rating": {
-          "name": "rating",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "restaurants_name_unique": {
-          "name": "restaurants_name_unique",
-          "columns": [
-            "name"
-          ],
-          "isUnique": true
-        }
-      },
-      "foreignKeys": {
-        "restaurants_author_id_users_id_fk": {
-          "name": "restaurants_author_id_users_id_fk",
-          "tableFrom": "restaurants",
-          "tableTo": "users",
-          "columnsFrom": [
-            "author_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "restaurants_school_id_schools_id_fk": {
-          "name": "restaurants_school_id_schools_id_fk",
-          "tableFrom": "restaurants",
-          "tableTo": "schools",
-          "columnsFrom": [
-            "school_id"
+            "spot_id"
           ],
           "columnsTo": [
             "id"
@@ -358,8 +223,116 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "tag_to_restaurants": {
-      "name": "tag_to_restaurants",
+    "spots": {
+      "name": "spots",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "author_id": {
+          "name": "author_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "school_id": {
+          "name": "school_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "prefecture_id": {
+          "name": "prefecture_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "rating": {
+          "name": "rating",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "spots_author_id_users_id_fk": {
+          "name": "spots_author_id_users_id_fk",
+          "tableFrom": "spots",
+          "tableTo": "users",
+          "columnsFrom": [
+            "author_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "spots_school_id_schools_id_fk": {
+          "name": "spots_school_id_schools_id_fk",
+          "tableFrom": "spots",
+          "tableTo": "schools",
+          "columnsFrom": [
+            "school_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "tag_to_spots": {
+      "name": "tag_to_spots",
       "columns": {
         "tag_id": {
           "name": "tag_id",
@@ -368,8 +341,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "restaurant_id": {
-          "name": "restaurant_id",
+        "spot_id": {
+          "name": "spot_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -400,9 +373,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "tag_to_restaurants_tag_id_tags_id_fk": {
-          "name": "tag_to_restaurants_tag_id_tags_id_fk",
-          "tableFrom": "tag_to_restaurants",
+        "tag_to_spots_tag_id_tags_id_fk": {
+          "name": "tag_to_spots_tag_id_tags_id_fk",
+          "tableFrom": "tag_to_spots",
           "tableTo": "tags",
           "columnsFrom": [
             "tag_id"
@@ -413,12 +386,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "tag_to_restaurants_restaurant_id_restaurants_id_fk": {
-          "name": "tag_to_restaurants_restaurant_id_restaurants_id_fk",
-          "tableFrom": "tag_to_restaurants",
-          "tableTo": "restaurants",
+        "tag_to_spots_spot_id_spots_id_fk": {
+          "name": "tag_to_spots_spot_id_spots_id_fk",
+          "tableFrom": "tag_to_spots",
+          "tableTo": "spots",
           "columnsFrom": [
-            "restaurant_id"
+            "spot_id"
           ],
           "columnsTo": [
             "id"
@@ -428,12 +401,12 @@
         }
       },
       "compositePrimaryKeys": {
-        "tag_to_restaurants_tag_id_restaurant_id_pk": {
+        "tag_to_spots_tag_id_spot_id_pk": {
           "columns": [
-            "restaurant_id",
+            "spot_id",
             "tag_id"
           ],
-          "name": "tag_to_restaurants_tag_id_restaurant_id_pk"
+          "name": "tag_to_spots_tag_id_spot_id_pk"
         }
       },
       "uniqueConstraints": {}
@@ -593,8 +566,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "users_to_restaurants": {
-      "name": "users_to_restaurants",
+    "users_to_spots": {
+      "name": "users_to_spots",
       "columns": {
         "user_id": {
           "name": "user_id",
@@ -603,8 +576,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "restaurant_id": {
-          "name": "restaurant_id",
+        "spot_id": {
+          "name": "spot_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -621,9 +594,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "users_to_restaurants_user_id_users_id_fk": {
-          "name": "users_to_restaurants_user_id_users_id_fk",
-          "tableFrom": "users_to_restaurants",
+        "users_to_spots_user_id_users_id_fk": {
+          "name": "users_to_spots_user_id_users_id_fk",
+          "tableFrom": "users_to_spots",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
@@ -634,12 +607,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "users_to_restaurants_restaurant_id_restaurants_id_fk": {
-          "name": "users_to_restaurants_restaurant_id_restaurants_id_fk",
-          "tableFrom": "users_to_restaurants",
-          "tableTo": "restaurants",
+        "users_to_spots_spot_id_spots_id_fk": {
+          "name": "users_to_spots_spot_id_spots_id_fk",
+          "tableFrom": "users_to_spots",
+          "tableTo": "spots",
           "columnsFrom": [
-            "restaurant_id"
+            "spot_id"
           ],
           "columnsTo": [
             "id"
@@ -649,12 +622,12 @@
         }
       },
       "compositePrimaryKeys": {
-        "users_to_restaurants_user_id_restaurant_id_pk": {
+        "users_to_spots_user_id_spot_id_pk": {
           "columns": [
-            "restaurant_id",
+            "spot_id",
             "user_id"
           ],
-          "name": "users_to_restaurants_user_id_restaurant_id_pk"
+          "name": "users_to_spots_user_id_spot_id_pk"
         }
       },
       "uniqueConstraints": {}

@@ -3,6 +3,7 @@ import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import * as authService from '@/service/auth_service';
 import * as userService from '@/service/user_service';
 import * as schoolService from '@/service/school_service';
+import * as spotService from '@/service/spot_service';
 import * as schema from '@/schema';
 import { drizzle } from 'drizzle-orm/d1';
 import { UpdateUserRequest } from './request/user_request';
@@ -11,6 +12,7 @@ import { LoginResponse } from './response/auth_response';
 import { LoginRequest, SignUpRequest } from './request/auth_request';
 import { DAY } from './const/time';
 import { CreateSchoolRequest, UpdateSchoolRequest } from './request/school_request';
+import { CreateSpotRequest, UpdateSpotRequest } from './request/spot_request';
 
 type Bindings = {
   DB: D1Database,
@@ -19,7 +21,11 @@ type Bindings = {
   ENV: string
 };
 
-const app = new Hono<{ Bindings: Bindings }>();
+type Variables = {
+  user_id: string
+}
+
+const app = new Hono<{ Bindings: Bindings, Variables: Variables }>();
 
 app.use('/*', async (c, next) => {
   const token = getCookie(c, 'access_token');
@@ -34,7 +40,7 @@ app.use('/*', async (c, next) => {
 
   const db = drizzle(c.env.DB, { schema: schema });
 
-  await authService.checkToken({ token: token, db: db, blackList: c.env.TOKEN_BLACK_LIST }).catch((err) => {
+  const id = await authService.checkToken({ token: token, db: db, blackList: c.env.TOKEN_BLACK_LIST }).catch((err) => {
     if (err === errorMessages.auth.invalidToken) {
       return c.json({ message: errorMessages.auth.unauthorized }, 401);
     } else if (err === errorMessages.auth.tokenExpired) {
@@ -42,7 +48,9 @@ app.use('/*', async (c, next) => {
     } else if (err === errorMessages.auth.notFound) {
       return c.json({ message: errorMessages.auth.unauthorized }, 403);
     }
-  });
+  }) as string;
+
+  c.set('user_id', id);
 
   await next();
 });
@@ -224,10 +232,78 @@ schoolsGroup.delete('/:id', async (c) => {
   return c.json(res, 200);
 });
 
+const SpotsGroup = new Hono<{ Bindings: Bindings, Variables: Variables }>();
+
+SpotsGroup.get('/', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+
+  const res = await spotService.getAllSpots({ db: db });
+
+  return c.json(res, 200);
+});
+SpotsGroup.get('/search', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const keyword = await c.req.query('keyword') || '';
+
+  const res = await spotService.getSpotsByKeyword({ db: db, req: { keyword: keyword }});
+
+  return c.json(res, 200);
+});
+SpotsGroup.get('/:id', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+
+  const res = await spotService.getSpotById({ db: db, req: { id: id }});
+
+  return c.json(res, 200);
+});
+SpotsGroup.post('/', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const req = await c.req.json<CreateSpotRequest>();
+
+  const res = await spotService.createSpot({ db: db, req: { ...req, author_id: c.get('user_id') } });
+
+  return c.json(res, 201);
+});
+SpotsGroup.put('/:id', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+  const req = await c.req.json<UpdateSpotRequest>();
+
+  const res = await spotService.updateSpot({ db: db, req: { ...req, id } });
+
+  return c.json(res, 200);
+});
+SpotsGroup.delete('/:id', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+
+  const res = await spotService.deleteSpot({ db: db, req: { id: id, author_id: c.get('user_id') }});
+
+  return c.json(res, 200);
+});
+SpotsGroup.post('/:id/like', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+
+  const res = await spotService.addFavoriteSpot({ db: db, user_id: c.get('user_id'), spot_id: id });
+
+  return c.json(res, 200);
+});
+SpotsGroup.delete('/:id/like', async (c) => {
+  const db = drizzle(c.env.DB, { schema: schema });
+  const id = await Number(c.req.param('id'));
+
+  const res = await spotService.removeFavoriteSpot({ db: db, user_id: c.get('user_id'), spot_id: id });
+
+  return c.json(res, 200);
+});
+
 const api = new Hono<{ Bindings: Bindings }>();
 
 app.route('/users', usersGroup);
 app.route('/schools', schoolsGroup);
+app.route('/spots', SpotsGroup);
 api.route('/auth', authGroup);
 api.route('/app', app);
 

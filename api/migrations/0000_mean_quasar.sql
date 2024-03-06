@@ -1,40 +1,23 @@
 CREATE TABLE `comments` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`author_id` text,
-	`restaurant_id` integer,
+	`spot_id` integer,
 	`content` text NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	`updated_at` text,
 	`deleted_at` text,
 	FOREIGN KEY (`author_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`spot_id`) REFERENCES `spots`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `photos` (
 	`id` integer PRIMARY KEY NOT NULL,
-	`comment_id` integer,
-	`restaurant_id` integer,
+	`spot_id` integer,
 	`url` text NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	`updated_at` text,
 	`deleted_at` text,
-	FOREIGN KEY (`comment_id`) REFERENCES `comments`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants`(`id`) ON UPDATE no action ON DELETE no action
-);
---> statement-breakpoint
-CREATE TABLE `restaurants` (
-	`id` integer PRIMARY KEY NOT NULL,
-	`name` text NOT NULL,
-	`author_id` text,
-	`school_id` integer,
-	`prefecture_id` integer,
-	`address` text,
-	`rating` real NOT NULL,
-	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	`updated_at` text,
-	`deleted_at` text,
-	FOREIGN KEY (`author_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`school_id`) REFERENCES `schools`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`spot_id`) REFERENCES `spots`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `schools` (
@@ -47,15 +30,30 @@ CREATE TABLE `schools` (
 	`deleted_at` text
 );
 --> statement-breakpoint
-CREATE TABLE `tag_to_restaurants` (
-	`tag_id` integer,
-	`restaurant_id` integer,
+CREATE TABLE `spots` (
+	`id` integer PRIMARY KEY NOT NULL,
+	`name` text NOT NULL,
+	`author_id` text,
+	`school_id` integer,
+	`prefecture_id` integer NOT NULL,
+	`address` text NOT NULL,
+	`rating` real DEFAULT 0 NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	`updated_at` text,
 	`deleted_at` text,
-	PRIMARY KEY(`restaurant_id`, `tag_id`),
+	FOREIGN KEY (`author_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`school_id`) REFERENCES `schools`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `tag_to_spots` (
+	`tag_id` integer,
+	`spot_id` integer,
+	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`updated_at` text,
+	`deleted_at` text,
+	PRIMARY KEY(`spot_id`, `tag_id`),
 	FOREIGN KEY (`tag_id`) REFERENCES `tags`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`spot_id`) REFERENCES `spots`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `tags` (
@@ -79,16 +77,15 @@ CREATE TABLE `users` (
 	FOREIGN KEY (`school_id`) REFERENCES `schools`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE TABLE `users_to_restaurants` (
+CREATE TABLE `users_to_spots` (
 	`user_id` text,
-	`restaurant_id` integer,
+	`spot_id` integer,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	PRIMARY KEY(`restaurant_id`, `user_id`),
+	PRIMARY KEY(`spot_id`, `user_id`),
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`restaurant_id`) REFERENCES `restaurants`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`spot_id`) REFERENCES `spots`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `restaurants_name_unique` ON `restaurants` (`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `schools_name_unique` ON `schools` (`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `tags_name_unique` ON `tags` (`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);--> statement-breakpoint
