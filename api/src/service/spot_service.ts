@@ -1,5 +1,6 @@
 import * as spot_repository from '@/repository/spot_repository';
 import * as users_to_spots_repository from '@/repository/users_to_spots_repository';
+import * as tag_to_spots_repository from '@/repository/tag_to_spots_repository';
 import { newGetAllSpotsResponse, newGetSpotByIDResponse, newGetSpotsByKeywordResponse } from '@/response/spot_response';
 import * as schema from '@/schema';
 import { DrizzleD1Database } from 'drizzle-orm/d1';
@@ -43,14 +44,23 @@ type CreateSpotParams = {
     prefecture_id: number;
     // school_id: number;
     author_id: string;
+    tag_ids: number[];
 };
 
 export const createSpot = async ({ db, req }: ISpotOperationParams<CreateSpotParams>) => {
+    if (!req) {
+        throw new Error('Invalid request');
+    }
+
     const result = await spot_repository.createSpot({ db, req }).catch((err) => {
         throw new Error(err);
     });
 
-    return result;
+    await tag_to_spots_repository.bulkCreateTagToSpot({ db, req: { tag_ids: req.tag_ids, spot_id: result.meta.last_row_id } }).catch((err) => {
+        throw new Error(err);
+    });
+
+    return;
 }
 
 type UpdateSpotParams = {
@@ -59,12 +69,23 @@ type UpdateSpotParams = {
     address?: string;
     prefecture_id?: number;
     // school_id?: number;
+    tag_ids?: number[];
 };
 
 export const updateSpot = async ({ db, req }: ISpotOperationParams<UpdateSpotParams>) => {
     const result = await spot_repository.updateSpot({ db, req }).catch((err) => {
         throw new Error(err);
     });
+
+    if (req?.tag_ids) {
+        await tag_to_spots_repository.deleteTagToSpotBySpotId({ db, req: { spot_id: req.id } }).catch((err) => {
+            throw new Error(err);
+        });
+
+        await tag_to_spots_repository.bulkCreateTagToSpot({ db, req: { tag_ids: req.tag_ids, spot_id: req.id } }).catch((err) => {
+            throw new Error(err);
+        });
+    }
 
     return result;
 }

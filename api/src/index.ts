@@ -261,9 +261,11 @@ spotsGroup.post('/', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
   const req = await c.req.json<CreateSpotRequest>();
 
-  const res = await spotService.createSpot({ db: db, req: { ...req, author_id: c.get('user_id') } });
+  await spotService.createSpot({ db: db, req: { ...req, author_id: c.get('user_id') } }).catch((err) => {
+    return c.json({ message: err.message }, 500);
+  });
 
-  return c.json(res, 201);
+  return c.json('', 201);
 });
 spotsGroup.put('/:id', async (c) => {
   const db = drizzle(c.env.DB, { schema: schema });
@@ -299,11 +301,14 @@ spotsGroup.delete('/:id/like', async (c) => {
   return c.json(res, 200);
 });
 
+const tagGroup = new Hono<{ Bindings: Bindings }>();
+
 const api = new Hono<{ Bindings: Bindings }>();
 
 app.route('/users', usersGroup);
 app.route('/schools', schoolsGroup);
 app.route('/spots', spotsGroup);
+app.route('/tags', tagGroup);
 api.route('/auth', authGroup);
 api.route('/app', app);
 
