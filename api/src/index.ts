@@ -303,7 +303,7 @@ const api = new Hono<{ Bindings: Bindings }>();
 
 app.route('/users', usersGroup);
 app.route('/schools', schoolsGroup);
-app.route('/Spots', SpotsGroup);
+app.route('/spots', SpotsGroup);
 api.route('/auth', authGroup);
 api.route('/app', app);
 
