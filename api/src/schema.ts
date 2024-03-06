@@ -85,7 +85,7 @@ export const comments = sqliteTable('comments', {
     deleted_at: text("deleted_at"),
 });
 
-export const commentsRelations = relations(comments, ({ one }) => ({
+export const commentsRelations = relations(comments, ({ one, many }) => ({
     user: one(users, {
         fields: [comments.author_id],
         references: [users.id],
@@ -94,6 +94,7 @@ export const commentsRelations = relations(comments, ({ one }) => ({
         fields: [comments.spot_id],
         references: [spots.id],
     }),
+    photos: many(photos),
 }));
 
 export const tags = sqliteTable('tags', {
@@ -139,6 +140,10 @@ export const photos = sqliteTable('photos', {
 });
 
 export const photosRelations = relations(photos, ({ one }) => ({
+    comment: one(comments, {
+        fields: [photos.spot_id],
+        references: [comments.id],
+    }),
     spot: one(spots, {
         fields: [photos.spot_id],
         references: [spots.id],

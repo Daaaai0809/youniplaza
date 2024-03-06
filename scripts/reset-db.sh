@@ -10,7 +10,7 @@ cd "${SERVER_DIR}"
 
 pwd
 
-TABLE_NAMES=("users" "schools" "restaurants" "comments" "tags" "tag_to_restaurants" "photos" "users_to_restaurants")
+TABLE_NAMES=("users" "schools" "spots" "comments" "tags" "tag_to_spots" "photos" "users_to_spots")
 
 # Drop the database
 for table in "${TABLE_NAMES[@]}"; do
