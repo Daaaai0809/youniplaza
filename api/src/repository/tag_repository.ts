@@ -55,7 +55,7 @@ export const createTag = async ({ db, req }: ITagOperationParams<CreateTagParams
     return result;
 };
 
-export const updateTag = async ({ db, req }: ITagOperationParams<{ id: number, name: string }>) => {
+export const updateTag = async ({ db, req }: ITagOperationParams<{ id: number, name?: string }>) => {
     if (!req) {
         throw new Error('Invalid request');
     }

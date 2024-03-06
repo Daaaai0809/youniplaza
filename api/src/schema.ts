@@ -68,8 +68,8 @@ export const spotsRelations = relations(spots, ({ one, many }) => ({
 }));
 
 export const users_to_spots = sqliteTable('users_to_spots', {
-    user_id: text("user_id").references(() => users.id),
-    spot_id: int("spot_id").references(() => spots.id),
+    user_id: text("user_id").references(() => users.id, {onDelete: 'cascade'}),
+    spot_id: int("spot_id").references(() => spots.id, {onDelete: 'cascade'}),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
 }, (t) => ({
     pk: primaryKey({ columns: [t.user_id, t.spot_id] }),
@@ -110,8 +110,8 @@ export const tagsRelations = relations(tags, ({ many }) => ({
 }));
 
 export const tag_to_spots = sqliteTable('tag_to_spots', {
-    tag_id: int("tag_id").references(() => tags.id),
-    spot_id: int("spot_id").references(() => spots.id),
+    tag_id: int("tag_id").references(() => tags.id, {onDelete: 'cascade'}),
+    spot_id: int("spot_id").references(() => spots.id, {onDelete: 'cascade'}),
     created_at: text("created_at").default(sql`CURRENT_TIMESTAMP`).notNull(),
     updated_at: text("updated_at"), 
     deleted_at: text("deleted_at"),
