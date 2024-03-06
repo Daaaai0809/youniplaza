@@ -14,7 +14,7 @@ TABLE_NAMES=("users" "schools" "spots" "comments" "tags" "tag_to_spots" "photos"
 
 # Drop the database
 for table in "${TABLE_NAMES[@]}"; do
-  wrangler d1 execute unimeshi-db --local --command "DROP TABLE ${table};"
+  wrangler d1 execute youniplaza --local --command "DROP TABLE ${table};"
 done
 
 rm -R migrations
