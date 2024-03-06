@@ -42,7 +42,7 @@ type CreateSpotParams = {
     name: string;
     address: string;
     prefecture_id: number;
-    // school_id: number;
+    school_id: number;
     author_id: string;
     tag_ids: number[];
 };
@@ -67,8 +67,8 @@ type UpdateSpotParams = {
     id: number;
     name?: string;
     address?: string;
+    school_id?: number;
     prefecture_id?: number;
-    // school_id?: number;
     tag_ids?: number[];
 };
 

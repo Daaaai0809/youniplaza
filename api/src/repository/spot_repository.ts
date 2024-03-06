@@ -46,7 +46,7 @@ type CreateSpotParams = {
     name: string;
     address: string;
     prefecture_id: number;
-    // school_id: number;
+    school_id: number;
     author_id: string;
 };
 
@@ -59,7 +59,7 @@ export const createSpot = async ({ db, req }: ISpotOperationParams<CreateSpotPar
         name: req.name,
         address: req.address,
         prefecture_id: req.prefecture_id,
-        // school_id: req.school_id,
+        school_id: req.school_id,
         author_id: req.author_id,
     }).execute();
 
@@ -71,7 +71,7 @@ type UpdateSpotParams = {
     name?: string;
     address?: string;
     prefecture_id?: number;
-    // school_id?: number;
+    school_id?: number;
     rating?: number;
 };
 
@@ -84,7 +84,7 @@ export const updateSpot = async ({ db, req }: ISpotOperationParams<UpdateSpotPar
         name: req.name,
         address: req.address,
         prefecture_id: req.prefecture_id,
-        // school_id: req.school_id,
+        school_id: req.school_id,
         rating: req.rating,
     }).where(eq(schema.spots.id, req.id)).execute();
 
